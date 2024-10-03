@@ -1,5 +1,15 @@
 import { useState } from 'react';
-import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
+import {
+	Button,
+	StyleSheet,
+	Text,
+	TextInput,
+	View,
+	ScrollView,
+	FlatList,
+} from 'react-native';
+import GoalCockpit from './components/GoalCockpit';
+import GoalsList from './components/GoalsList';
 
 export default function App() {
 	const [goals, setGoals] = useState([
@@ -14,34 +24,21 @@ export default function App() {
 	};
 
 	const handleAddBtnPress = () => {
+		// if (goalTitle === '') return;
 		setGoals((prevGoals) => [
 			...prevGoals,
 			{ id: prevGoals.length + 1, title: goalTitle },
 		]);
-		setGoalTitle('');
+		// setGoalTitle('');
 	};
 	return (
 		<View style={styles.container}>
-			<View style={styles.inputContainer}>
-				<TextInput
-					value={goalTitle}
-					style={styles.inputEl}
-					onChangeText={handleGoalInputChange}
-					placeholder='Your Course Goal...'
-				/>
-				<Button title='Add' onPress={handleAddBtnPress} />
-			</View>
-			<View style={styles.listContainer}>
-				{goals.map((goal) => {
-					return (
-						<View style={styles.goalItemContainer} key={goal.id}>
-							<Text style={styles.goalItemText}>
-								{goal.title}
-							</Text>
-						</View>
-					);
-				})}
-			</View>
+			<GoalCockpit
+				inputValue={goalTitle}
+				onChangeText={handleGoalInputChange}
+				onPress={handleAddBtnPress}
+			/>
+			<GoalsList data={goals} />
 		</View>
 	);
 }
@@ -49,34 +46,8 @@ export default function App() {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		padding: 50,
-	},
-	inputContainer: {
-		justifyContent: 'space-between',
-		flexDirection: 'row',
-		marginBottom: 25,
-	},
-	inputEl: {
-		flex: 1,
-		borderColor: '#ccc',
-		borderBottomWidth: 1,
-		padding: 0,
-		marginRight: 10,
-	},
-	listContainer: {
-		height: 500,
-		alignContent: 'center',
-	},
-	goalItemContainer: {
-		backgroundColor: 'rgb(115, 38, 159)',
-		borderColor: '#aaa',
-		borderRadius: 2,
-		borderWidth: 1,
-		padding: 10,
-		marginBottom: 15,
-	},
-	goalItemText: {
-		color: 'white',
-		fontSize: 17,
+		paddingTop: 50,
+		padding: 30,
+		// paddingHorizontal: 16,
 	},
 });
