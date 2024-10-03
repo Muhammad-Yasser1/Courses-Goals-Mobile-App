@@ -7,9 +7,11 @@ import {
 	View,
 	ScrollView,
 	FlatList,
+	Pressable,
 } from 'react-native';
 import GoalCockpit from './components/GoalCockpit';
 import GoalsList from './components/GoalsList';
+import { StatusBar } from 'expo-status-bar';
 
 export default function App() {
 	const [goals, setGoals] = useState([
@@ -18,28 +20,49 @@ export default function App() {
 		{ id: 3, title: 'Study react native APIs' },
 	]);
 	const [goalTitle, setGoalTitle] = useState('');
+	const [modalIsVisible, setModalIsVisible] = useState(false);
 
 	const handleGoalInputChange = (titleInput) => {
 		setGoalTitle(titleInput);
 	};
 
 	const handleAddBtnPress = () => {
-		// if (goalTitle === '') return;
+		if (goalTitle === '') return;
 		setGoals((prevGoals) => [
 			...prevGoals,
 			{ id: prevGoals.length + 1, title: goalTitle },
 		]);
-		// setGoalTitle('');
+		setGoalTitle('');
+		setModalIsVisible(false);
 	};
+
+	const deleteGoal = (id) => {
+		setGoals((prevGoals) => prevGoals.filter((goal) => goal.id !== id));
+	};
+
+	const handleCancelBtnPress = () => {
+		setModalIsVisible(false);
+	};
+
 	return (
-		<View style={styles.container}>
-			<GoalCockpit
-				inputValue={goalTitle}
-				onChangeText={handleGoalInputChange}
-				onPress={handleAddBtnPress}
-			/>
-			<GoalsList data={goals} />
-		</View>
+		<>
+			<StatusBar style='light' />
+			<View style={styles.container}>
+				<View style={styles.addButton}>
+					<Pressable onPress={() => setModalIsVisible(true)}>
+						<Text style={styles.plusSign}>+</Text>
+					</Pressable>
+				</View>
+				<GoalCockpit
+					inputValue={goalTitle}
+					onChangeText={handleGoalInputChange}
+					onAddButtonPressed={handleAddBtnPress}
+					isVisible={modalIsVisible}
+					onCancelPressed={handleCancelBtnPress}
+				/>
+				<GoalsList data={goals} onItemPress={deleteGoal} />
+			</View>
+		</>
 	);
 }
 
@@ -49,5 +72,19 @@ const styles = StyleSheet.create({
 		paddingTop: 50,
 		padding: 30,
 		// paddingHorizontal: 16,
+	},
+	addButton: {
+		width: 60,
+		height: 60,
+		borderRadius: 100,
+		justifyContent: 'center',
+		alignItems: 'center',
+		marginHorizontal: 'auto',
+		backgroundColor: 'rgb(14, 21, 219)',
+	},
+	plusSign: {
+		color: 'white',
+		fontSize: 22,
+		padding: 10,
 	},
 });
